@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import { MantineProvider } from '@mantine/core';
 import { SessionProvider } from 'next-auth/react';
+import { RecoilRoot, atom, selector, useRecoilState, useRecoilValue } from 'recoil';
 export default function App({ Component, 
   pageProps: {session, ...pageProps}
 }) {
@@ -18,7 +19,9 @@ export default function App({ Component,
           }}
         >
           <SessionProvider session={session}>
-            <Component {...pageProps} />
+            <RecoilRoot>
+              <Component {...pageProps} />
+            </RecoilRoot>
           </SessionProvider>
         </MantineProvider>
     </>

@@ -7,10 +7,16 @@ import HeaderWithoutSession from '../components/HeaderWithoutSession'
 import HeaderWithSession from '../components/HeaderWithSession'
 import SignInPage from './SignInPage';
 
+import { useRecoilState } from 'recoil';
+import hamburgerIcon from '../atoms/hamburgerAtom'
+import modalComponent from '../atoms/modalAtom';
+import AddPhotoModal from './AddPhotoModal';
+
 function Container ({ children }) {
     const { data: session } = useSession();
     const [wantsToSignIn, setWantsToSignIn] = useState(false);
-    const [hamburgerClicked, setHamburgerClicked] = useState(false);
+    const [hamburgerClicked, setHamburgerClicked] = useRecoilState(hamburgerIcon);
+    const [showModal, setShowModal] = useRecoilState(modalComponent);
 
     return (
         <AppShell
@@ -22,24 +28,33 @@ function Container ({ children }) {
                 margin: "0",
             }
         }}
-        fixed
+        // fixed
         navbarOffsetBreakpoint="sm"
         header={
-            session ? <HeaderWithSession hamburgerSetter={[hamburgerClicked, value => setHamburgerClicked(value)]}/> : <HeaderWithoutSession signinSetter={value => setWantsToSignIn(value)}/>
+            session ? <HeaderWithSession /> : <HeaderWithoutSession signinSetter={value => setWantsToSignIn(value)}/>
+            // hamburgerSetter={[hamburgerClicked, value => setHamburgerClicked(value)]}
         }
         navbar={
             session &&
             // <MediaQuery largerThan="sm" styles={{ display: "none" }}>
                 <Navbar width={{ base: "100%", sm: 0 }} hidden={!hamburgerClicked}>
-                    <Anchor>Home</Anchor>
-                    <Anchor>Features</Anchor>
-                    <Anchor>Pricing</Anchor>
+                    <Anchor>
+                        Stuff 1
+                    </Anchor>
+                    <Anchor>
+                        Stuff 2
+                    </Anchor>
+                    <Anchor>
+                        Upload Photo
+                    </Anchor>
                 </Navbar>
             // </MediaQuery>
             
         }
         >
             { wantsToSignIn && <SignInPage signinSetter={value => setWantsToSignIn(value)}/>}
+            {/* BRUH */}
+            { showModal && <AddPhotoModal />}
         </AppShell>
     );
 }

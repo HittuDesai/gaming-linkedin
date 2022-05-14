@@ -2,12 +2,15 @@ import { Group, Header, MediaQuery, Burger, Text, ActionIcon, Anchor } from '@ma
 import { signOut } from 'next-auth/react';
 import React from 'react'
 import { GoSignIn } from 'react-icons/go';
-import { IoLogoApple } from 'react-icons/io';
 import { CgProfile } from 'react-icons/cg';
+import Link from 'next/link';
+import { useRecoilState } from 'recoil';
+import hamburgerIcon from '../atoms/hamburgerAtom';
+import NavBarLinks from './NavBarLinks'
 
-function HeaderWithSession({ hamburgerSetter }) {
-    var hamburgerClicked = hamburgerSetter[0];
-    var setHamburgerClicked = hamburgerSetter[1];
+function HeaderWithSession() {
+    const [hamburgerClicked, setHamburgerClicked] = useRecoilState(hamburgerIcon);
+
     return (
         <Header height={50}>
             <Group position='center' p={5} mr='1rem' ml='1rem'>
@@ -18,10 +21,12 @@ function HeaderWithSession({ hamburgerSetter }) {
                         onClick={() => setHamburgerClicked(hamburgerClicked => !hamburgerClicked)}
                         />
                         <Group>
-                            <ActionIcon>
-                                <CgProfile color='white'/>
-                            </ActionIcon>
-                            <ActionIcon>
+                            <Link href="./profile">
+                                <ActionIcon>
+                                    <CgProfile color='white'/>
+                                </ActionIcon>
+                            </Link>
+                            <ActionIcon onClick={() => signOut()}>
                                 <GoSignIn color='white'/>
                             </ActionIcon>
                         </Group>
@@ -37,8 +42,13 @@ function HeaderWithSession({ hamburgerSetter }) {
                                 Stuff 2
                             </Anchor>
                             <Anchor>
-                                Stuff 3
+                                Upload Photo
                             </Anchor>
+                            {/* {
+                                NavBarLinks.map((NavBarLink, index) => {
+                                    return <NavBarLink key={index}/>
+                                })
+                            } */}
                         </Group>
                         <Group>
                             <ActionIcon>
@@ -50,32 +60,9 @@ function HeaderWithSession({ hamburgerSetter }) {
                         </Group>
                     </Group>
                 </MediaQuery>
-                {/* <Text size='md' weight='bolder' align='center' onClick={() => signOut()}>SIGNED IN</Text> */}
             </Group>
         </Header>
     );
 }
-
-{/* <Header height={50}>
-                <MediaQuery largerThan="sm" styles={{ display: "none" }}>
-                    <Burger
-                    opened={hamburgerClicked}
-                    onClick={() => setHamburgerClicked(e => !e)}
-                    />
-                </MediaQuery>
-                <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
-                    <Group direction='row' position='apart'>
-                        <ActionIcon>
-                            <IoLogoApple color='black'/>
-                        </ActionIcon>
-                        <ActionIcon>
-                            <GoSignIn color='black'/>
-                        </ActionIcon>
-                        <ActionIcon onClick={() => signOut()}>
-                            <GoSignIn color='white'/>
-                        </ActionIcon>
-                    </Group>
-                </MediaQuery>
-            </Header> */}
 
 export default HeaderWithSession;
