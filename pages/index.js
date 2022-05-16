@@ -1,3 +1,4 @@
+// NEED TO TEST OUT FIREBASE FUNCTIONALITY SO REMOVING THE NEXT_AUTH SIGNIN FOR A SIMPLE EMAIL SIGNIN
 import Head from 'next/head'
 import { useSession } from 'next-auth/react'
 import Container from '../components/Container'
