@@ -11,10 +11,12 @@ import { useRecoilState } from 'recoil';
 import hamburgerIcon from '../atoms/hamburgerAtom'
 import modalComponent from '../atoms/modalAtom';
 import AddPhotoModal from './AddPhotoModal';
+import SignUpPage from './SignUpPage';
 
 function Container ({ children }) {
     const { data: session } = useSession();
     const [wantsToSignIn, setWantsToSignIn] = useState(false);
+    const [wantsToSignUp, setWantsToSignUp] = useState(false);
     const [hamburgerClicked, setHamburgerClicked] = useRecoilState(hamburgerIcon);
     const [showModal, setShowModal] = useRecoilState(modalComponent);
 
@@ -31,7 +33,7 @@ function Container ({ children }) {
         // fixed
         navbarOffsetBreakpoint="sm"
         header={
-            session ? <HeaderWithSession /> : <HeaderWithoutSession signinSetter={value => setWantsToSignIn(value)}/>
+            session ? <HeaderWithSession /> : <HeaderWithoutSession signinSetter={value => setWantsToSignIn(value)} signupSetter={value => setWantsToSignUp(value)}/>
             // hamburgerSetter={[hamburgerClicked, value => setHamburgerClicked(value)]}
         }
         navbar={
@@ -53,6 +55,7 @@ function Container ({ children }) {
         }
         >
             { wantsToSignIn && <SignInPage signinSetter={value => setWantsToSignIn(value)}/>}
+            { wantsToSignUp && <SignUpPage signupSetter={value => setWantsToSignUp(value)}/>}
             {/* BRUH */}
             { showModal && <AddPhotoModal />}
         </AppShell>
