@@ -1,24 +1,22 @@
-import { AppShell, Navbar, Group, Header, Burger, Anchor, MediaQuery, ActionIcon } from '@mantine/core'
-import React, { useState } from 'react';
-import { GoSignIn } from 'react-icons/go'
-import { IoLogoApple } from 'react-icons/io'
-import { signOut, useSession } from 'next-auth/react'
+import { AppShell, Navbar, Anchor } from '@mantine/core'
+import React from 'react';
+import { useSession } from 'next-auth/react'
 import HeaderWithoutSession from '../components/HeaderWithoutSession'
 import HeaderWithSession from '../components/HeaderWithSession'
-import SignInPage from './SignInPage';
 
 import { useRecoilState } from 'recoil';
 import hamburgerIcon from '../atoms/hamburgerAtom'
 import modalComponent from '../atoms/modalAtom';
+import login from '../atoms/loginAtom';
+
 import AddPhotoModal from './AddPhotoModal';
-import SignUpPage from './SignUpPage';
+import Login from './Login';
 
 function Container ({ children }) {
     const { data: session } = useSession();
-    const [wantsToSignIn, setWantsToSignIn] = useState(false);
-    const [wantsToSignUp, setWantsToSignUp] = useState(false);
     const [hamburgerClicked, setHamburgerClicked] = useRecoilState(hamburgerIcon);
     const [showModal, setShowModal] = useRecoilState(modalComponent);
+    const [wantsToLogin, setWantsToLogin] = useRecoilState(login);
 
     return (
         <AppShell
@@ -33,8 +31,7 @@ function Container ({ children }) {
         // fixed
         navbarOffsetBreakpoint="sm"
         header={
-            session ? <HeaderWithSession /> : <HeaderWithoutSession signinSetter={value => setWantsToSignIn(value)} signupSetter={value => setWantsToSignUp(value)}/>
-            // hamburgerSetter={[hamburgerClicked, value => setHamburgerClicked(value)]}
+            session ? <HeaderWithSession /> : <HeaderWithoutSession />
         }
         navbar={
             session &&
@@ -54,10 +51,8 @@ function Container ({ children }) {
             
         }
         >
-            { wantsToSignIn && <SignInPage signinSetter={value => setWantsToSignIn(value)}/>}
-            { wantsToSignUp && <SignUpPage signupSetter={value => setWantsToSignUp(value)}/>}
-            {/* BRUH */}
             { showModal && <AddPhotoModal />}
+            { wantsToLogin && <Login /> }
         </AppShell>
     );
 }

@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Center, Group, Modal, Text, TextInput } from "@mantine/core";
+import { Button, Center, Group, Modal, Text, TextInput } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 
 import { useRecoilState } from "recoil";
