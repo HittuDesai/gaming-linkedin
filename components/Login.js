@@ -41,18 +41,22 @@ function Login() {
         if(isSigningUp) {
             const usersRef = collection(db, "users");
 
-            // CREATE A NEW DOCUMENT FOR THE USER
             const q = query(usersRef, where("email", "==", email));
             const querySnapshot = await getDocs(q);
             const results = querySnapshot.docs.length;
             if(results != 0) {
                 if(window.confirm("There is already a user with this email. Try signing in or using a different email.")) {
-                    isSigningUp(false);
-                    isSigningIn(true);
+                    setIsSigningUp(false);
+                    setIsSigningIn(true);
                 }
             }
             else {
-                console.log("LETS CREATE A NEW USER");
+                const docRef = await addDoc(collection(db, "users"), {
+                    email: email,
+                    password: password,
+                    timeStamp: serverTimestamp(),
+                });
+                console.log(docRef);
             }
         }
 
@@ -85,7 +89,10 @@ function Login() {
                     id="password"
                     {...form.getInputProps('password')}
                     />
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit">
+                        {isSigningIn && "Sign In"}
+                        {isSigningUp && "Sign Up"}
+                    </Button>
                 </form>
             </Group>
         </Center>
