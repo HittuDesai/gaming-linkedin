@@ -1,8 +1,6 @@
 import { AppShell, Navbar, Anchor } from '@mantine/core'
 import React from 'react';
 import { useSession } from 'next-auth/react'
-import HeaderWithoutSession from '../components/HeaderWithoutSession'
-import HeaderWithSession from '../components/HeaderWithSession'
 
 import { useRecoilState } from 'recoil';
 import hamburgerIcon from '../atoms/hamburgerAtom'
@@ -10,10 +8,10 @@ import modalComponent from '../atoms/modalAtom';
 import login from '../atoms/loginAtom';
 
 import AddPhotoModal from './AddPhotoModal';
-import Login from './Login';
+import LoginPage from './LoginPage';
+import PageHeader from './PageHeader';
 
 function Container ({ children }) {
-    const { data: session } = useSession();
     const [hamburgerClicked, setHamburgerClicked] = useRecoilState(hamburgerIcon);
     const [showModal, setShowModal] = useRecoilState(modalComponent);
     const [wantsToLogin, setWantsToLogin] = useRecoilState(login);
@@ -30,11 +28,8 @@ function Container ({ children }) {
         }}
         // fixed
         navbarOffsetBreakpoint="sm"
-        header={
-            session ? <HeaderWithSession /> : <HeaderWithoutSession />
-        }
+        header={<PageHeader />}
         navbar={
-            session &&
             // <MediaQuery largerThan="sm" styles={{ display: "none" }}>
                 <Navbar width={{ base: "100%", sm: 0 }} hidden={!hamburgerClicked}>
                     <Anchor>
@@ -52,7 +47,7 @@ function Container ({ children }) {
         }
         >
             { showModal && <AddPhotoModal />}
-            { wantsToLogin && <Login /> }
+            { wantsToLogin && <LoginPage /> }
         </AppShell>
     );
 }
