@@ -61,7 +61,20 @@ function Login() {
         }
 
         if(isSigningIn) {
+            const usersRef = collection(db, "users");
 
+            const q = query(usersRef, where("email", "==", email), where("password", "==", password));
+            const querySnapshot = await getDocs(q);
+            const results = querySnapshot.docs.length;
+            if(results == 0) {
+                if(window.confirm("There is no user with this email. Try signing up or using a different email.")) {
+                    setIsSigningUp(true);
+                    setIsSigningIn(false);
+                }
+            }
+            else if(results == 1) {
+                console.log(querySnapshot.docs[0].data());
+            }
         }
         return;
     }
