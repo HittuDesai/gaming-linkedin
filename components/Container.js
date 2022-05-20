@@ -1,54 +1,113 @@
-import { AppShell, Navbar, Anchor } from '@mantine/core'
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSession } from 'next-auth/react'
 
 import { useRecoilState } from 'recoil';
-import hamburgerIcon from '../atoms/hamburgerAtom'
 import modalComponent from '../atoms/modalAtom';
 import login from '../atoms/loginAtom';
+import signin from '../atoms/signinAtom';
+import signup from '../atoms/signupAtom';
+import sessionEmail from '../atoms/sessionEmailAtom';
 
 import AddPhotoModal from './AddPhotoModal';
 import LoginPage from './LoginPage';
-import PageHeader from './PageHeader';
+
+import { addDoc, collection, serverTimestamp, query, where, getDocs } from "@firebase/firestore"
+import { db, storage } from "../firebase"
 
 function Container ({ children }) {
-    const [hamburgerClicked, setHamburgerClicked] = useRecoilState(hamburgerIcon);
     const [showModal, setShowModal] = useRecoilState(modalComponent);
     const [wantsToLogin, setWantsToLogin] = useRecoilState(login);
+    const [isSigningIn, setIsSigningIn] = useRecoilState(signin);
+    const [isSigningUp, setIsSigningUp] = useRecoilState(signup);
+    const [sessionEmailID, setSessionEmailID] = useRecoilState(sessionEmail);
+    const {data: session} = useSession({isSigningIn, isSigningUp});
 
-    return (
-        <AppShell
-        styles={{
-            main: {
-                width: "100vw",
-                height: "100vh",
-                padding: "0",
-                margin: "0",
+    useEffect(() => {
+        if(!session)
+            return;    
+        console.log(session);
+        setSessionEmailID(session.user.email);
+
+        if(isSigningUp) {
+            console.log("TRYING TO SIGN UP");
+            const usersRef = collection(db, "users");
+
+            const q = query(usersRef, where("email", "==", sessionEmailID));
+            const querySnapshot = getDocs(q);
+            const results = querySnapshot.docs.length;
+
+            if(results != 0) {
+                if(window.confirm("There is already a user with this email. Try signing in or using a different email.")) {
+                    setIsSigningUp(false);
+                    setIsSigningIn(true);
+                }
             }
-        }}
-        // fixed
-        navbarOffsetBreakpoint="sm"
-        header={<PageHeader />}
-        navbar={
-            // <MediaQuery largerThan="sm" styles={{ display: "none" }}>
-                <Navbar width={{ base: "100%", sm: 0 }} hidden={!hamburgerClicked}>
-                    <Anchor>
-                        Stuff 1
-                    </Anchor>
-                    <Anchor>
-                        Stuff 2
-                    </Anchor>
-                    <Anchor>
-                        Upload Photo
-                    </Anchor>
-                </Navbar>
-            // </MediaQuery>
-            
+            else {
+                const docRef = addDoc(collection(db, "users"), {
+                    email: sessionEmailID,
+                    timeStamp: serverTimestamp(),
+                });
+                console.log(docRef);
+            }
         }
-        >
+    }, [session])
+
+    useEffect(() => {
+        // if(!sessionEmailID) {
+        //     console.log("SESSION EMAIL ID DOES NOT EXIST")
+        //     return;
+        // }
+
+        if(isSigningUp) {
+            console.log("TRYING TO SIGN UP");
+            const usersRef = collection(db, "users");
+
+            const q = query(usersRef, where("email", "==", sessionEmailID));
+            const querySnapshot = getDocs(q);
+            const results = querySnapshot.docs.length;
+
+            if(results != 0) {
+                if(window.confirm("There is already a user with this email. Try signing in or using a different email.")) {
+                    setIsSigningUp(false);
+                    setIsSigningIn(true);
+                }
+            }
+            else {
+                const docRef = addDoc(collection(db, "users"), {
+                    email: sessionEmailID,
+                    timeStamp: serverTimestamp(),
+                });
+                console.log(docRef);
+            }
+        }
+
+        if(isSigningIn) {
+            const usersRef = collection(db, "users");
+
+            const q = query(usersRef, where("email", "==", sessionEmailID), where("password", "==", password));
+            const querySnapshot = getDocs(q);
+            const results = querySnapshot.docs.length;
+            if(results == 0) {
+                if(window.confirm("There is no user with this email. Try signing up or using a different email.")) {
+                    setIsSigningUp(true);
+                    setIsSigningIn(false);
+                }
+            }
+            else if(results == 1) {
+                console.log(querySnapshot.docs[0].data());
+            }
+        }
+        return;
+    
+    }, [sessionEmailID])
+    
+    
+    return (
+        <React.Fragment>
             { showModal && <AddPhotoModal />}
             { wantsToLogin && <LoginPage /> }
-        </AppShell>
+            { sessionEmailID && "YOU ARE LOGGED IN"}
+        </React.Fragment>
     );
 }
 

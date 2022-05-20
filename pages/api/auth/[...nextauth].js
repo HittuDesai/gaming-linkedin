@@ -10,4 +10,17 @@ export default NextAuth({
     }),
     // ...add more providers here
   ],
+
+  callbacks: {
+    async session({session, isSigningIn, isSigningUp}) {
+      console.log(isSigningIn);
+      console.log(isSigningUp);
+      console.log("BRUH");
+      if(isSigningIn)
+        session.type = "signin";
+      if(isSigningUp)
+        session.type = "signup";
+      return session;
+    },
+  }
 })

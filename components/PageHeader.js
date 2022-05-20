@@ -6,13 +6,14 @@ import { CgProfile } from 'react-icons/cg';
 import { IoLogoApple } from 'react-icons/io'
 
 import Link from 'next/link';
-import NavBarLinks from './NavBarLinks'
 
 import { useRecoilState } from 'recoil';
 import hamburgerIcon from '../atoms/hamburgerAtom';
 import login from '../atoms/loginAtom';
 import signin from '../atoms/signinAtom';
 import signup from '../atoms/signupAtom';
+import AnchorTags from './AnchorTags';
+import sessionEmail from '../atoms/sessionEmailAtom';
 
 function PageHeader() {
     const { data: session } = useSession();
@@ -21,11 +22,12 @@ function PageHeader() {
     const [isLoggingIn, setIsLoggingIn] = useRecoilState(login);
     const [isSigningIn, setIsSigningIn] = useRecoilState(signin);
     const [isSigningUp, setIsSigningUp] = useRecoilState(signup);
+    const [sessionEmailID, setSessionEmailID] = useRecoilState(sessionEmail);
 
     const HeaderWithoutSession = () => (
         <Header height={50}>
             <Group position='apart' p={5} mr='1rem' ml='1rem'>
-                <IoLogoApple size="40" color='black' />
+                <IoLogoApple size="40" color='white' />
                 <Group>
                     <Text size='md' weight='bolder' align='center' onClick={() => {setIsLoggingIn(true);setIsSigningIn(true);setIsSigningUp(false);}}>SIGN IN</Text>
                     <Text size='md' weight='bolder' align='center' onClick={() => {setIsLoggingIn(true);setIsSigningIn(false);setIsSigningUp(true);}}>SIGN UP</Text>
@@ -34,6 +36,14 @@ function PageHeader() {
         </Header>
     );
 
+    const handleSignOut = () => {
+        setIsLoggingIn(false);
+        setIsSigningIn(false);
+        setIsSigningUp(false);
+        setSessionEmailID("");
+        signOut();
+    }
+
     const WithSessionRight = () => (
         <Group>
             <Link href="./profile">
@@ -41,19 +51,9 @@ function PageHeader() {
                     <CgProfile color='white'/>
                 </ActionIcon>
             </Link>
-            <ActionIcon onClick={() => signOut()}>
+            <ActionIcon onClick={handleSignOut}>
                 <GoSignIn color='white'/>
             </ActionIcon>
-        </Group>
-    );
-
-    const AnchorTags = () => (
-        <Group>
-            {
-                NavBarLinks.map((NavBarLink, index) => {
-                    return <NavBarLink key={index}/>
-                })
-            }
         </Group>
     );
 
@@ -71,7 +71,7 @@ function PageHeader() {
                 </MediaQuery>
                 <MediaQuery smallerThan="xs" styles={{ display: "none" }}>
                     <Group position='apart' style={{width: "100%"}}>
-                        <AnchorTags />
+                        <Group><AnchorTags /></Group>
                         <WithSessionRight />
                     </Group>
                 </MediaQuery>

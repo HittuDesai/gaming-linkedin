@@ -8,7 +8,6 @@ import login from '../atoms/loginAtom';
 import signin from '../atoms/signinAtom';
 import signup from '../atoms/signupAtom';
 
-
 function Login({ providerData }) {
     const [isLoggingIn, setIsLoggingIn] = useRecoilState(login);
     const [isSigningIn, setIsSigningIn] = useRecoilState(signin);
