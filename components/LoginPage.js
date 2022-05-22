@@ -1,31 +1,36 @@
-import React, { useState, useEffect } from "react";
-import { Center, Group } from "@mantine/core";
-import { GiCancel } from 'react-icons/gi'
+import React from "react";
+import { Button, Center, Group } from "@mantine/core";
 
-import { useRecoilState } from 'recoil';
-import login from '../atoms/loginAtom';
-import signin from '../atoms/signinAtom';
-import signup from '../atoms/signupAtom';
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import SignIn from "./SignIn";
 
-
-import { getProviders, useSession } from "next-auth/react";
-import { getDownloadURL, ref, uploadString } from "firebase/storage";
-import Login from "./Login";
-
+import { useRecoilState } from "recoil";
+import login from "../atoms/loginAtom";
+import signin from "../atoms/signinAtom";
+import signup from "../atoms/signupAtom";
+import SignUp from "./SignUp";
 
 function LoginPage() {
-    const [isLoggingIn, setIsLoggingIn] = useRecoilState(login);
-    const [isSigningIn, setIsSigningIn] = useRecoilState(signin);
-    const [isSigningUp, setIsSigningUp] = useRecoilState(signup);
-
+    const auth = getAuth();
+    const [wantsToLogin, setWantsToLogin] = useRecoilState(login);
+    const [wantsToSignin, setWantsToSignin] = useRecoilState(signin);
+    const [wantsToSignup, setWantsToSignup] = useRecoilState(signup);
     
-    const [providers, setProviders] = useState(null);
-    useEffect(() => {
-        (async () => {
-            const res = await getProviders();
-            setProviders(res);
-        })();
-    }, []);
+    const handleSignUp = () => {
+        console.log(email);
+        console.log(password);
+
+        createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            const user = userCredential.user;
+            console.log(user);
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode, " => ", errorMessage);
+        });
+    }
     
     return (
         <Center
@@ -34,14 +39,13 @@ function LoginPage() {
             height: "100vh",
         }}
         >
-            <Group direction="column" position="center" style={{width: "15rem",}}>
-                {
-                    providers && Object.keys(providers).map((provider, id) => {
-                        return (
-                            <Login key={id} providerData={providers[provider]} />
-                        );
-                    })
-                }
+            <Group direction="column" position="center" style={{width: "20rem", outline: "thick double #32a1ce"}} p={20}>
+                {(!wantsToSignin & !wantsToSignup) && <>
+                    <Button onClick={() => {setWantsToSignin(true);setWantsToSignup(false);}} style={{width: "100%"}}>Sign In</Button>
+                    <Button onClick={() => {setWantsToSignin(false);setWantsToSignup(true);}} style={{width: "100%"}}>Sign Up</Button>
+                </>}
+                {wantsToSignin && <SignIn />}
+                {wantsToSignup && <SignUp />}
             </Group>
         </Center>
     );

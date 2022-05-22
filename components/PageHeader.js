@@ -29,8 +29,7 @@ function PageHeader() {
             <Group position='apart' p={5} mr='1rem' ml='1rem'>
                 <IoLogoApple size="40" color='white' />
                 <Group>
-                    <Text size='md' weight='bolder' align='center' onClick={() => {setIsLoggingIn(true);setIsSigningIn(true);setIsSigningUp(false);}}>SIGN IN</Text>
-                    <Text size='md' weight='bolder' align='center' onClick={() => {setIsLoggingIn(true);setIsSigningIn(false);setIsSigningUp(true);}}>SIGN UP</Text>
+                    <Text id="loginButton" size='md' weight='bolder' align='center' onClick={() => {setIsLoggingIn(true)}}>LOG IN</Text>
                 </Group>
             </Group>
         </Header>
