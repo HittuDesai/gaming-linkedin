@@ -26,7 +26,7 @@ function Container ({ children }) {
 
     return (
         <React.Fragment>
-            { currentUserID === 0 ? 
+            { !currentUserID ? 
                 <>{ wantsToLogin && <LoginPage /> }</> : 
                 <>
                     <Feed />

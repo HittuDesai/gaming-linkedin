@@ -1,4 +1,4 @@
-import { Group, Header, MediaQuery, Burger, Text, ActionIcon, Anchor } from '@mantine/core';
+import { Group, Header, MediaQuery, Burger, Text, ActionIcon } from '@mantine/core';
 import React from 'react'
 import { GoSignIn } from 'react-icons/go';
 import { CgProfile } from 'react-icons/cg';
@@ -80,7 +80,7 @@ function PageHeader() {
     );
 
     return (
-        <>{ currentUserID === 0 ? <HeaderWithoutSession /> : <HeaderWithSession />}</>
+        <>{ !currentUserID ? <HeaderWithoutSession /> : <HeaderWithSession />}</>
     );
 }
 
