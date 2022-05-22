@@ -4,7 +4,6 @@ import { Center, Group, Title } from '@mantine/core';
 import Profile from '../components/Profile'
 
 import { useRecoilState } from 'recoil';
-import userid from '../atoms/userAtom'
 
 import { collection, query, where, getDocs } from "@firebase/firestore"
 import { db, storage } from "../firebase"
@@ -15,15 +14,9 @@ import LoginPage from '../components/LoginPage';
 
 export default function Home() {
     const auth = getAuth();
-    const [currentUserID, setCurrentUserID] = useRecoilState(userid);
     const [wantsToLogin, setWantsToLogin] = useRecoilState(login);
 
-    onAuthStateChanged(auth, user => {
-        if(user)
-            setCurrentUserID(user.uid);
-        else
-            setCurrentUserID(0);
-    });
+    
 
     // const usersRef = collection(db, "users");
     // const q = query(usersRef, where("email", "==", sessionEmailID));

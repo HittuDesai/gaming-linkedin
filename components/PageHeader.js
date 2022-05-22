@@ -1,5 +1,4 @@
 import { Group, Header, MediaQuery, Burger, Text, ActionIcon, Anchor } from '@mantine/core';
-import { signOut, useSession } from 'next-auth/react';
 import React from 'react'
 import { GoSignIn } from 'react-icons/go';
 import { CgProfile } from 'react-icons/cg';
@@ -7,23 +6,22 @@ import { IoLogoApple } from 'react-icons/io'
 
 import Link from 'next/link';
 
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import hamburgerIcon from '../atoms/hamburgerAtom';
 import login from '../atoms/loginAtom';
 import signin from '../atoms/signinAtom';
 import signup from '../atoms/signupAtom';
 import AnchorTags from './AnchorTags';
-import sessionEmail from '../atoms/sessionEmailAtom';
+import userid from '../atoms/userAtom';
+import { getAuth, signOut } from 'firebase/auth';
 
 function PageHeader() {
-    const { data: session } = useSession();
-
     const [hamburgerClicked, setHamburgerClicked] = useRecoilState(hamburgerIcon);
     const [isLoggingIn, setIsLoggingIn] = useRecoilState(login);
     const [isSigningIn, setIsSigningIn] = useRecoilState(signin);
     const [isSigningUp, setIsSigningUp] = useRecoilState(signup);
-    const [sessionEmailID, setSessionEmailID] = useRecoilState(sessionEmail);
-
+    const currentUserID = useRecoilValue(userid);
+    
     const HeaderWithoutSession = () => (
         <Header height={50}>
             <Group position='apart' p={5} mr='1rem' ml='1rem'>
@@ -39,8 +37,11 @@ function PageHeader() {
         setIsLoggingIn(false);
         setIsSigningIn(false);
         setIsSigningUp(false);
-        setSessionEmailID("");
-        signOut();
+
+        const auth = getAuth();
+        signOut(auth).then(() => {
+            console.log("SIGNED OUT");
+        })
     }
 
     const WithSessionRight = () => (
@@ -79,7 +80,7 @@ function PageHeader() {
     );
 
     return (
-        <>{session ? <HeaderWithSession /> : <HeaderWithoutSession />}</>
+        <>{ currentUserID === 0 ? <HeaderWithoutSession /> : <HeaderWithSession />}</>
     );
 }
 

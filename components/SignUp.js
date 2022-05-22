@@ -9,7 +9,7 @@ import login from '../atoms/loginAtom';
 import signup from "../atoms/signupAtom";
 
 import { db } from "../firebase"
-import { collection, getDocs, addDoc, doc } from "firebase/firestore"
+import { collection, getDocs, addDoc, doc, setDoc } from "firebase/firestore"
 
 function SignUp() {
     const [wantsToSignup, setWantsToSignup] = useRecoilState(signup);
@@ -36,7 +36,6 @@ function SignUp() {
     })
     
     const handleSignUpWithEmail = () => {
-        console.log(allUsernames);
         if(allUsernames.includes(signupUsername)) {
             setSignupUsernameError("This Username is already taken. Please try another one");
             return;
@@ -44,7 +43,8 @@ function SignUp() {
 
         createUserWithEmailAndPassword(auth, signupEmail, signupPassword)
         .then((userCredential) => {
-            addDoc(collectionReference, {
+            const documentReference = doc(db, `users/${userCredential.user.uid}`)
+            setDoc(documentReference, {
                 uid: userCredential.user.uid,
                 email: signupEmail,
                 password: signupPassword,
