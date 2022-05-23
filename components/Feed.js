@@ -7,7 +7,8 @@ import userid from '../atoms/userIdAtom';
 import useruploads from '../atoms/userUploadsAtom'
 import userdata from '../atoms/userDataAtom'
 
-import { Avatar, Center, Group, Image, Text } from '@mantine/core';
+import { Avatar, Center, Group, Text } from '@mantine/core';
+import Image from 'next/image'
 
 function Feed() {
     const currentUserID = useRecoilValue(userid);
@@ -53,7 +54,7 @@ function Feed() {
                                     <Avatar radius='xl' />
                                     <Text>{currentUserData.username}</Text>
                                 </Group>
-                                <Image src={userUpload.url} width='100%' />
+                                <Image src={userUpload.url} layout="fill" />
                                 <Group direction='row' style={{width: '100%', aspectRatio: "1"}} position='apart' px={20}>
                                     <Text>{userUpload.caption}</Text>
                                 </Group>
