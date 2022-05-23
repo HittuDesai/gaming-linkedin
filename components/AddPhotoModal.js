@@ -1,24 +1,24 @@
 import { Button, Center, Group, Modal, Text, TextInput } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import modalComponent from "../atoms/modalAtom";
+import userid from "../atoms/userIdAtom";
 
 import { useState, useRef } from 'react'
 import { MdAddPhotoAlternate, MdCancel, MdUpload, MdError, MdOutlineDone } from 'react-icons/md'
 
 import { addDoc, collection, serverTimestamp } from "@firebase/firestore"
 import { db, storage } from "../firebase"
-import { useSession } from "next-auth/react";
-import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes, uploadString } from "firebase/storage";
 
 function AddPhotoModal()  {
+    const currentUserID = useRecoilValue(userid);
     const [showModal, setShowModal] = useRecoilState(modalComponent);
     const [file, setFile] = useState(null);
     const [caption, setCaption] = useState("");
     const [dropZoneIcon, setDropZoneIcon] = useState(<MdAddPhotoAlternate size={40}/>);
     
-    const {data: session} = useSession();
     const captionRef = useRef(null);
 
     const dropzoneChildren = (status) => (
@@ -39,26 +39,36 @@ function AddPhotoModal()  {
             console.log("BRUH");
             return;
         }
-        // console.log(file);
-        // console.log(caption);
 
-        const docRef = await addDoc(collection(db, "posts"), {
-            username: session.user.email,
-            caption: caption,
-            profileImage: session.user.image,
-            timeStamp: serverTimestamp(),
-        });
-
-        // console.log(docRef);
-
-        const imageRef = ref(storage, `posts/${docRef.id}/image`);
-        const smth = await uploadString(imageRef, file, "data_url").then(async postSnapshot => {
-            // console.log(postSnapshot);
-            const downloadURL = await getDownloadURL(imageRef);
-            await updateDoc(doc(db, 'posts', docRef.id, {
-                image: downloadURL,
-            }));
-        });
+        const usersCollection = collection(db, `users`);
+        const postsCollection = collection(usersCollection, `${currentUserID}/uploads`);
+        
+        const imageRef = ref(storage, `${currentUserID}/uploads/${file.name}`);
+        uploadBytes(imageRef, file)
+        .then(snapshot => {
+            console.log("IMAGE HAS BEEN SUCCESSFULLY UPLOADED TO THE STORAGE");
+            getDownloadURL(snapshot.ref)
+            .then(url => {
+                addDoc(postsCollection, {
+                    url: url,
+                    time: serverTimestamp(),
+                    caption: caption,
+                })
+                .then(response => {
+                    console.log(response);
+                })
+                .catch(error => {
+                    console.log("ERROR IN ADDING DOCUMENT TO UPLOADS COLLECTION", error);
+                })
+            })
+            .catch(error => {
+                console.log("ERROR IN GETTING DOWNLOAD URL FOR UPLOADED IMAGE", error);
+            })
+        })
+        .catch(error => {
+            console.log("ERROR IN IMAGE UPLOAD", error);
+        })
+        
 
         setShowModal(false);
     }
@@ -80,7 +90,7 @@ function AddPhotoModal()  {
                         accept={IMAGE_MIME_TYPE}
                         onDrop={(file) => {
                             setDropZoneIcon(<MdOutlineDone color="green" size={40} />);
-                            setFile(file);
+                            setFile(file[0]);
                             captionRef.current.focus();
                         }}
                         onReject={() => {
@@ -93,7 +103,7 @@ function AddPhotoModal()  {
 
                         <TextInput
                         ref={captionRef}
-                        placeholder="Your name"
+                        placeholder="Enter Caption"
                         required
                         style={{width: "100%",}}
                         onChange={(e) => {

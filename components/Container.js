@@ -3,13 +3,13 @@ import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import modalComponent from '../atoms/modalAtom';
 import login from '../atoms/loginAtom';
-import userid from '../atoms/userAtom'
+import userid from '../atoms/userIdAtom'
 
 import AddPhotoModal from './AddPhotoModal';
 import LoginPage from './LoginPage';
 import Feed from './Feed';
 
-import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 function Container ({ children }) {
     const showModal = useRecoilValue(modalComponent);

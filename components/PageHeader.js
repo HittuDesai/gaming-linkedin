@@ -12,7 +12,7 @@ import login from '../atoms/loginAtom';
 import signin from '../atoms/signinAtom';
 import signup from '../atoms/signupAtom';
 import AnchorTags from './AnchorTags';
-import userid from '../atoms/userAtom';
+import userid from '../atoms/userIdAtom';
 import { getAuth, signOut } from 'firebase/auth';
 
 function PageHeader() {
