@@ -18,7 +18,7 @@ function Feed() {
 
     const [currentUserUploads, setCurrentUserUploads] = useRecoilState(useruploads);
     const [currentUserData, setCurrentUserData] = useRecoilState(userdata);
-    
+
     useEffect(() => {
         let array = []
         getDocs(postsCollection)
@@ -46,19 +46,21 @@ function Feed() {
             <Group direction='column' style={{width: '100%'}} position='center'>
             {
                 currentUserUploads.map((userUpload, index) => {
-                    console.log(userUpload.url)
                     return (
                         <React.Fragment key={index}>
-                            <Group direction='column' style={{width: '100%', aspectRatio: "1"}}>
-                                <Group direction='row' style={{width: '100%', aspectRatio: "1"}} position='apart' px={20}>
+                            <div style={{
+                                width: '100%', aspectRatio: "1",
+                                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                            }}>
+                                <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem 0.5rem'}}>
                                     <Avatar radius='xl' />
                                     <Text>{currentUserData.username}</Text>
-                                </Group>
-                                <Image src={userUpload.url} layout="fill" />
-                                <Group direction='row' style={{width: '100%', aspectRatio: "1"}} position='apart' px={20}>
+                                </div>
+                                <div>
+                                    <img src={userUpload.url} style={{width: '100%', aspectRatio: '1'}}/>
                                     <Text>{userUpload.caption}</Text>
-                                </Group>
-                            </Group>
+                                </div>
+                            </div>
                         </React.Fragment>
                     );
                 })
