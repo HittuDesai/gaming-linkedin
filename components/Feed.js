@@ -29,6 +29,7 @@ function Feed() {
             })
         })
         .then(() => {
+            array.sort((a, b) => b.time - a.time);
             setCurrentUserUploads([...array])
         })
         .catch(error => {
@@ -48,7 +49,7 @@ function Feed() {
                 currentUserUploads.map((userUpload, index) => {
                     return (
                         <React.Fragment key={index}>
-                            <div style={{
+                            <div id={index} style={{
                                 width: '100%', aspectRatio: "1",
                                 display: 'flex', flexDirection: 'column', alignItems: 'center',
                             }}>

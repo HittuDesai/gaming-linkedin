@@ -55,7 +55,8 @@ function AddPhotoModal()  {
                     caption: caption,
                 })
                 .then(response => {
-                    console.log(response);
+                    console.log(response.id);
+                    setShowModal(false);
                 })
                 .catch(error => {
                     console.log("ERROR IN ADDING DOCUMENT TO UPLOADS COLLECTION", error);
@@ -68,9 +69,6 @@ function AddPhotoModal()  {
         .catch(error => {
             console.log("ERROR IN IMAGE UPLOAD", error);
         })
-        
-
-        setShowModal(false);
     }
 
     return (
