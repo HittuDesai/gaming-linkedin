@@ -13,6 +13,7 @@ import signin from '../atoms/signinAtom';
 import signup from '../atoms/signupAtom';
 import AnchorTags from './AnchorTags';
 import userid from '../atoms/userIdAtom';
+import profile from '../atoms/userProfileAtom'
 import { getAuth, signOut } from 'firebase/auth';
 
 function PageHeader() {
@@ -20,6 +21,7 @@ function PageHeader() {
     const [isLoggingIn, setIsLoggingIn] = useRecoilState(login);
     const [isSigningIn, setIsSigningIn] = useRecoilState(signin);
     const [isSigningUp, setIsSigningUp] = useRecoilState(signup);
+    const [showUserProfile, setShowUserProfile] = useRecoilState(profile)
     const currentUserID = useRecoilValue(userid);
     
     const HeaderWithoutSession = () => (
@@ -46,11 +48,9 @@ function PageHeader() {
 
     const WithSessionRight = () => (
         <Group>
-            <Link href="./profile">
-                <ActionIcon>
-                    <CgProfile color='white'/>
-                </ActionIcon>
-            </Link>
+            <ActionIcon onClick={() => setShowUserProfile(!showUserProfile)}>
+                <CgProfile color='white'/>
+            </ActionIcon>
             <ActionIcon onClick={handleSignOut}>
                 <GoSignIn color='white'/>
             </ActionIcon>
