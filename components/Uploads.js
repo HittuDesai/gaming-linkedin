@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
-import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
-import { db } from '../firebase';
+import { collection, doc, getDoc, getDocs, deleteDoc } from 'firebase/firestore';
+import { db, storage } from '../firebase';
+import { ref, dele, deleteObject } from 'firebase/storage'
 
 import { useRecoilState, useRecoilValue } from 'recoil'
 import userid from '../atoms/userIdAtom';
 import useruploads from '../atoms/userUploadsAtom'
 import userdata from '../atoms/userDataAtom'
+import profile from '../atoms/userProfileAtom'
 
 import { Avatar, Group, Menu, MenuItem, Text } from '@mantine/core';
 import { MdDeleteForever } from 'react-icons/md';
@@ -18,14 +20,15 @@ function Uploads() {
 
     const [currentUserUploads, setCurrentUserUploads] = useRecoilState(useruploads);
     const [currentUserData, setCurrentUserData] = useRecoilState(userdata);
+    const [showUserProfile, setShowUserProfile] = useRecoilState(profile)
+
 
     useEffect(() => {
         let array = []
         getDocs(postsCollection)
         .then(querySnapshot => {
             querySnapshot.docs.forEach(doc => {
-                if(doc.id !== "dummy")
-                    array.push(doc.data());
+                array.push({...doc.data(), id: doc.id});
             })
         })
         .then(() => {
@@ -46,15 +49,13 @@ function Uploads() {
         
     }, [])
 
-    console.log(currentUserData);
-
     return (
         <Group direction='column' style={{width: '100%'}} position='center'>
         {
             currentUserUploads.map((userUpload, index) => {
                 return (
                     <React.Fragment key={index}>
-                        <div id={index} style={{
+                        <div style={{
                             width: '100%', aspectRatio: "1",
                             display: 'flex', flexDirection: 'column', alignItems: 'center',
                         }}>
@@ -65,13 +66,31 @@ function Uploads() {
                                 </div>
                                 <div>
                                     <Menu>
-                                        <MenuItem icon={<MdDeleteForever />}>
-                                            Delete
-                                        </MenuItem>
-                                        <MenuItem icon={<MdDeleteForever />}>
-                                            Delete
-                                        </MenuItem>
-                                        <MenuItem icon={<MdDeleteForever />}>
+                                        <MenuItem icon={<MdDeleteForever />}
+                                        id={index}
+                                        onClick={event => {
+                                            const element = event.currentTarget;
+                                            const elementID = element.id;
+                                            const documentID = currentUserUploads[elementID].id;
+                                            const documentReference = doc(db, `users/${currentUserID}/uploads/${documentID}`);
+                                            const postImageURL = currentUserUploads[elementID].url;
+                                            const postImageReference = ref(storage, postImageURL);
+
+                                            deleteObject(postImageReference).then(() => {
+                                                console.log("IMAGE DELETED FROM STORAGE");
+                                                deleteDoc(documentReference).then(() => {
+                                                    console.log("UPLOAD HAS BEEN DELETED");
+                                                    location.reload();
+                                                })
+                                                .catch(error => {
+                                                    console.log("ERROR IN DELETING DOCUMENT", error);
+                                                })
+                                            })
+                                            .catch(error => {
+                                                console.log("ERROR IN DELETING IMAGE FROM STORAGE", error);
+                                            })
+                                        }}
+                                        >
                                             Delete
                                         </MenuItem>
                                     </Menu>
