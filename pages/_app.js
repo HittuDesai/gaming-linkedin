@@ -5,7 +5,6 @@ import PageHeader from '../components/PageHeader';
 import AnchorTags from '../components/AnchorTags';
 import hamburgerIcon from '../atoms/hamburgerAtom';
 import PageNavbar from '../components/PageNavbar';
-import signin from '../atoms/signinAtom';
 export default function App({ Component, 
   pageProps: {session, ...pageProps}
 }) {
@@ -32,7 +31,6 @@ export default function App({ Component,
                   margin: "0",
               }
             }}
-            fixed
             navbarOffsetBreakpoint="sm"
             header={<PageHeader />}
             navbar={<PageNavbar />}

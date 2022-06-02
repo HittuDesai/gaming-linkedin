@@ -4,13 +4,9 @@ import { GoSignIn } from 'react-icons/go';
 import { CgProfile } from 'react-icons/cg';
 import { IoLogoApple } from 'react-icons/io'
 
-import Link from 'next/link';
-
 import { useRecoilState, useRecoilValue } from 'recoil';
 import hamburgerIcon from '../atoms/hamburgerAtom';
 import login from '../atoms/loginAtom';
-import signin from '../atoms/signinAtom';
-import signup from '../atoms/signupAtom';
 import AnchorTags from './AnchorTags';
 import userid from '../atoms/userIdAtom';
 import profile from '../atoms/userProfileAtom'
@@ -19,26 +15,28 @@ import { getAuth, signOut } from 'firebase/auth';
 function PageHeader() {
     const [hamburgerClicked, setHamburgerClicked] = useRecoilState(hamburgerIcon);
     const [isLoggingIn, setIsLoggingIn] = useRecoilState(login);
-    const [isSigningIn, setIsSigningIn] = useRecoilState(signin);
-    const [isSigningUp, setIsSigningUp] = useRecoilState(signup);
     const [showUserProfile, setShowUserProfile] = useRecoilState(profile)
     const currentUserID = useRecoilValue(userid);
-    
+
     const HeaderWithoutSession = () => (
         <Header height={50}>
             <Group position='apart' p={5} mr='1rem' ml='1rem'>
                 <IoLogoApple size="40" color='white' />
-                <Group>
-                    <Text id="loginButton" size='md' weight='bolder' align='center' onClick={() => {setIsLoggingIn(true)}}>LOG IN</Text>
-                </Group>
+                {isLoggingIn ? <Group>
+                    <Text id="cancelButton" size='md' weight='bolder' align='center' onClick={() => {
+                        window.location.pathname === "/" ? setIsLoggingIn(false) : window.location.pathname = "/";
+                    }}>Cancel</Text>
+                </Group> : <Group>
+                    <Text id="loginButton" size='md' weight='bolder' align='center' onClick={() => {
+                        setIsLoggingIn(true);
+                    }}>Log In</Text>
+                </Group>}
             </Group>
         </Header>
     );
 
     const handleSignOut = () => {
         setIsLoggingIn(false);
-        setIsSigningIn(false);
-        setIsSigningUp(false);
 
         const auth = getAuth();
         signOut(auth).then(() => {

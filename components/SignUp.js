@@ -4,15 +4,10 @@ import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWith
 import { GiCancel } from 'react-icons/gi'
 import { FaGoogle } from 'react-icons/fa'
 
-import { useRecoilState } from 'recoil';
-import login from '../atoms/loginAtom';
-import signup from "../atoms/signupAtom";
-
 import { db } from "../firebase"
-import { collection, getDocs, addDoc, doc, setDoc } from "firebase/firestore"
+import { collection, getDocs, doc, setDoc } from "firebase/firestore"
 
 function SignUp() {
-    const [wantsToSignup, setWantsToSignup] = useRecoilState(signup);
     const [isSignupSuccessful, setIsSignupSuccessful] = useState(false)
     const [signupEmail, setSignupEmail] = useState("");
     const [signupEmailError, setSignupEmailError] = useState("");
