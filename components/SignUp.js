@@ -52,12 +52,12 @@ function SignUp() {
                 setSignupPasswordError("");
                 setSignupUsernameError("");
                 setIsSignupSuccessful(true);
+                window.location = "/";
             })
         })
         .catch((error) => {
             console.log("error", error)
             const errorCode = error.code;
-            // console.log("errorCode", errorCode);
             if(errorCode === "auth/invalid-email")
                 setSignupEmailError("This Email is invalid")
             else if(errorCode === "auth/email-already-in-use")
@@ -73,58 +73,56 @@ function SignUp() {
 
     return (
         <React.Fragment>
-            {!isSignupSuccessful ?
-            <form style={{width: "100%", height:"100%"}} p={20}>
-                <TextInput
-                required
-                label="Username"
-                placeholder="Your Username"
-                value={signupUsername}
-                onChange={event => setSignupUsername(event.target.value)}
-                style={{width: "100%"}}
-                autoComplete="none"
-                />
-                {signupUsernameError !== "" &&
-                <Text size='xs' style={{fontStyle: "italic"}} weight="bolder" color="red">
-                    {signupUsernameError}
-                </Text>}
+            <Group style={{width: "100%", height:"100%"}} p={20} position="center">
+                <form style={{width: "90%", height:"100%"}}>
+                    <TextInput
+                    required
+                    label="Username"
+                    placeholder="Your Username"
+                    value={signupUsername}
+                    onChange={event => setSignupUsername(event.target.value)}
+                    style={{width: "100%"}}
+                    autoComplete="none"
+                    />
+                    {signupUsernameError !== "" &&
+                    <Text size='xs' style={{fontStyle: "italic"}} weight="bolder" color="red">
+                        {signupUsernameError}
+                    </Text>}
 
-                <TextInput
-                required
-                label="Email"
-                placeholder="Your Email"
-                value={signupEmail}
-                onChange={event => setSignupEmail(event.target.value)}
-                style={{width: "100%"}}
-                autoComplete="none"
-                />
-                {signupEmailError !== "" &&
-                <Text size='xs' style={{fontStyle: "italic"}} weight="bolder" color="red">
-                    {signupEmailError}
-                </Text>}
+                    <TextInput
+                    required
+                    label="Email"
+                    placeholder="Your Email"
+                    value={signupEmail}
+                    onChange={event => setSignupEmail(event.target.value)}
+                    style={{width: "100%"}}
+                    autoComplete="none"
+                    />
+                    {signupEmailError !== "" &&
+                    <Text size='xs' style={{fontStyle: "italic"}} weight="bolder" color="red">
+                        {signupEmailError}
+                    </Text>}
 
-                <PasswordInput
-                required
-                label="Password"
-                placeholder="Your Password"
-                value={signupPassword}
-                onChange={event => setSignupPassword(event.target.value)}
-                style={{width: "100%"}}
-                autoComplete="none"
-                />
-                {signupPasswordError !== "" &&
-                <Text size='xs' style={{fontStyle: "italic"}} weight="bolder" color="red">
-                    {signupPasswordError}
-                </Text>}
+                    <PasswordInput
+                    required
+                    label="Password"
+                    placeholder="Your Password"
+                    value={signupPassword}
+                    onChange={event => setSignupPassword(event.target.value)}
+                    style={{width: "100%"}}
+                    autoComplete="none"
+                    />
+                    {signupPasswordError !== "" &&
+                    <Text size='xs' style={{fontStyle: "italic"}} weight="bolder" color="red">
+                        {signupPasswordError}
+                    </Text>}
 
-                <Group direction="row" position="center" style={{width: "100%"}} py={20}>
-                    <Button onClick={handleSignUpWithEmail} style={{width: "100%"}}>Sign Up</Button>
-                    <Button onClick={() => setWantsToSignup(false)} style={{width: "100%"}}><GiCancel /></Button>
-                </Group>
-            </form> : 
-            <Group style={{width: "100%"}}>
-                HELLO THERE
-            </Group> }
+                    <Group direction="row" position="center" style={{width: "100%"}} py={20}>
+                        <Button onClick={handleSignUpWithEmail} style={{width: "47.4%"}}>Sign Up</Button>
+                        <Button onClick={() => setWantsToSignup(false)} style={{width: "47.4%"}}><GiCancel /></Button>
+                    </Group>
+                </form>
+            </Group>
         </React.Fragment>
     );
 }
