@@ -1,16 +1,14 @@
 import React, { useEffect } from 'react';
-import { collection, doc, getDoc, getDocs, deleteDoc } from 'firebase/firestore';
-import { db, storage } from '../firebase';
-import { ref, dele, deleteObject } from 'firebase/storage'
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { db } from '../firebase';
 
 import { useRecoilState, useRecoilValue } from 'recoil'
 import userid from '../atoms/userIdAtom';
 import useruploads from '../atoms/userUploadsAtom'
 import userdata from '../atoms/userDataAtom'
-import profile from '../atoms/userProfileAtom'
 
-import { Avatar, Group, Menu, MenuItem, Text } from '@mantine/core';
-import { MdDeleteForever } from 'react-icons/md';
+import { Group } from '@mantine/core';
+import Upload from './Upload';
 
 function Uploads() {
     const currentUserID = useRecoilValue(userid);
@@ -20,8 +18,6 @@ function Uploads() {
 
     const [currentUserUploads, setCurrentUserUploads] = useRecoilState(useruploads);
     const [currentUserData, setCurrentUserData] = useRecoilState(userdata);
-    const [showUserProfile, setShowUserProfile] = useRecoilState(profile)
-
 
     useEffect(() => {
         let array = []
@@ -46,7 +42,6 @@ function Uploads() {
         .catch(error => {
             console.log(error)
         });
-        
     }, [])
 
     return (
@@ -55,52 +50,7 @@ function Uploads() {
             currentUserUploads.map((userUpload, index) => {
                 return (
                     <React.Fragment key={index}>
-                        <div style={{
-                            width: '100%', aspectRatio: "1",
-                            display: 'flex', flexDirection: 'column', alignItems: 'center',
-                        }}>
-                            <div style={{width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.25rem 0.5rem'}}>
-                                <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                                    <Avatar src={currentUserData} radius='xl' />
-                                    <Text>{currentUserData.username}</Text>
-                                </div>
-                                <div>
-                                    <Menu>
-                                        <MenuItem icon={<MdDeleteForever />}
-                                        id={index}
-                                        onClick={event => {
-                                            const element = event.currentTarget;
-                                            const elementID = element.id;
-                                            const documentID = currentUserUploads[elementID].id;
-                                            const documentReference = doc(db, `users/${currentUserID}/uploads/${documentID}`);
-                                            const postImageURL = currentUserUploads[elementID].url;
-                                            const postImageReference = ref(storage, postImageURL);
-
-                                            deleteObject(postImageReference).then(() => {
-                                                console.log("IMAGE DELETED FROM STORAGE");
-                                                deleteDoc(documentReference).then(() => {
-                                                    console.log("UPLOAD HAS BEEN DELETED");
-                                                    location.reload();
-                                                })
-                                                .catch(error => {
-                                                    console.log("ERROR IN DELETING DOCUMENT", error);
-                                                })
-                                            })
-                                            .catch(error => {
-                                                console.log("ERROR IN DELETING IMAGE FROM STORAGE", error);
-                                            })
-                                        }}
-                                        >
-                                            Delete
-                                        </MenuItem>
-                                    </Menu>
-                                </div>
-                            </div>
-                            <div>
-                                <img src={userUpload.url} style={{width: '100%', aspectRatio: '1'}}/>
-                                <Text>{userUpload.caption}</Text>
-                            </div>
-                        </div>
+                        <Upload userUpload={userUpload}/>
                     </React.Fragment>
                 );
             })

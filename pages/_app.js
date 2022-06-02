@@ -1,6 +1,5 @@
 import Head from 'next/head';
 import { MantineProvider, AppShell, Navbar } from '@mantine/core';
-import { SessionProvider } from 'next-auth/react';
 import { RecoilRoot, atom, selector, useRecoilState, useRecoilValue } from 'recoil';
 import PageHeader from '../components/PageHeader';
 import AnchorTags from '../components/AnchorTags';
@@ -23,26 +22,24 @@ export default function App({ Component,
             colorScheme: 'dark',
           }}
         >
-          <SessionProvider session={session}>
-            <RecoilRoot>
-              <AppShell
-              styles={{
-                main: {
-                    width: "100vw",
-                    height: "100vh",
-                    padding: "0",
-                    margin: "0",
-                }
-              }}
-              // fixed
-              navbarOffsetBreakpoint="sm"
-              header={<PageHeader />}
-              navbar={<PageNavbar />}
-              >
-                <Component {...pageProps} />
-              </AppShell>
-            </RecoilRoot>
-          </SessionProvider>
+          <RecoilRoot>
+            <AppShell
+            styles={{
+              main: {
+                  width: "100vw",
+                  height: "100vh",
+                  padding: "0",
+                  margin: "0",
+              }
+            }}
+            fixed
+            navbarOffsetBreakpoint="sm"
+            header={<PageHeader />}
+            navbar={<PageNavbar />}
+            >
+              <Component {...pageProps} />
+            </AppShell>
+          </RecoilRoot>
         </MantineProvider>
     </>
   );

@@ -10,7 +10,7 @@ import { MdAddPhotoAlternate, MdCancel, MdUpload, MdError, MdOutlineDone } from 
 
 import { addDoc, collection, serverTimestamp } from "@firebase/firestore"
 import { db, storage } from "../firebase"
-import { getDownloadURL, ref, uploadBytes, uploadString } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 function AddPhotoModal()  {
     const currentUserID = useRecoilValue(userid);
@@ -40,8 +40,15 @@ function AddPhotoModal()  {
             return;
         }
 
-        const usersCollection = collection(db, `users`);
-        const postsCollection = collection(usersCollection, `${currentUserID}/uploads`);
+        const usersCollection = collection(db, 'users');
+        const uploadsCollection = collection(usersCollection, `${currentUserID}/uploads`);
+        const uploadTimestamp = serverTimestamp();
+        var uploadData = {
+            numberOfLikes: 0,
+            likedBy: [],
+            time: uploadTimestamp,
+            caption: caption,
+        }
         
         const imageRef = ref(storage, `${currentUserID}/uploads/${file.name}`);
         uploadBytes(imageRef, file)
@@ -49,13 +56,10 @@ function AddPhotoModal()  {
             console.log("IMAGE HAS BEEN SUCCESSFULLY UPLOADED TO THE STORAGE");
             getDownloadURL(snapshot.ref)
             .then(url => {
-                addDoc(postsCollection, {
-                    url: url,
-                    time: serverTimestamp(),
-                    caption: caption,
-                })
+                uploadData = { ...uploadData, url: url, };
+                addDoc(uploadsCollection, uploadData)
                 .then(response => {
-                    console.log(response.id);
+                    console.log("DO NOTHING");
                     setShowModal(false);
                 })
                 .catch(error => {
