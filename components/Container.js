@@ -16,16 +16,13 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 function Container ({ children }) {
     const showModal = useRecoilValue(modalComponent);
     const wantsToLogin = useRecoilValue(login);
-    const [currentUserID, setCurrentUserID] = useRecoilState(userid);
+    const currentUserID = useRecoilValue(userid);
     const [showUserProfile, setShowUserProfile] = useRecoilState(profile)
 
-    const auth = getAuth();
-    onAuthStateChanged(auth, user => {
-        if(user)
-            setCurrentUserID(user.uid);
-        else
-            setCurrentUserID(0);
-    });
+    // const auth = getAuth();
+    // onAuthStateChanged(auth, user => {
+    //     console.log({currentUserID});
+    // });
 
     return (
         <React.Fragment>
@@ -37,6 +34,7 @@ function Container ({ children }) {
                     { showModal && <AddPhotoModal /> }
                 </>
             }
+            <Uploads />
         </React.Fragment>
     );
 }

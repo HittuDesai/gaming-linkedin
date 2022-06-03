@@ -79,6 +79,7 @@ function PageHeader() {
 
     return (
         <>{ !currentUserID ? <HeaderWithoutSession /> : <HeaderWithSession />}</>
+        // <><HeaderWithoutSession /><HeaderWithSession /></>
     );
 }
 
