@@ -16,13 +16,17 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 function Container ({ children }) {
     const showModal = useRecoilValue(modalComponent);
     const wantsToLogin = useRecoilValue(login);
-    const currentUserID = useRecoilValue(userid);
+    const [currentUserID, setCurrentUserID] = useRecoilState(userid);
     const [showUserProfile, setShowUserProfile] = useRecoilState(profile)
 
-    // const auth = getAuth();
-    // onAuthStateChanged(auth, user => {
-    //     console.log({currentUserID});
-    // });
+    const auth = getAuth();
+    onAuthStateChanged(auth, user => {
+        console.log("AUTH STATE LISTENER")
+        if(!user)
+            setCurrentUserID(null);
+        else if(!currentUserID)
+            setCurrentUserID(user.uid);
+    });
 
     return (
         <React.Fragment>

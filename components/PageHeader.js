@@ -4,31 +4,35 @@ import { GoSignIn } from 'react-icons/go';
 import { CgProfile } from 'react-icons/cg';
 import { IoLogoApple } from 'react-icons/io'
 
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import hamburgerIcon from '../atoms/hamburgerAtom';
 import login from '../atoms/loginAtom';
 import AnchorTags from './AnchorTags';
 import userid from '../atoms/userIdAtom';
 import profile from '../atoms/userProfileAtom'
 import { getAuth, signOut } from 'firebase/auth';
+import signin from '../atoms/signinAtom';
+import signup from '../atoms/signupAtom';
 
 function PageHeader() {
     const [hamburgerClicked, setHamburgerClicked] = useRecoilState(hamburgerIcon);
-    const [isLoggingIn, setIsLoggingIn] = useRecoilState(login);
+    const [wantsToLogin, setWantsToLogin] = useRecoilState(login);
     const [showUserProfile, setShowUserProfile] = useRecoilState(profile)
     const currentUserID = useRecoilValue(userid);
+    const setWantsToSignIn = useSetRecoilState(signin);
+    const setWantsToSignUp = useSetRecoilState(signup);
 
     const HeaderWithoutSession = () => (
         <Header height={50}>
             <Group position='apart' p={5} mr='1rem' ml='1rem'>
                 <IoLogoApple size="40" color='white' />
-                {isLoggingIn ? <Group>
+                {wantsToLogin ? <Group>
                     <Text id="cancelButton" size='md' weight='bolder' align='center' onClick={() => {
-                        window.location.pathname === "/" ? setIsLoggingIn(false) : window.location.pathname = "/";
+                        setWantsToSignIn(false);setWantsToSignUp(false);setWantsToLogin(false);
                     }}>Cancel</Text>
                 </Group> : <Group>
                     <Text id="loginButton" size='md' weight='bolder' align='center' onClick={() => {
-                        setIsLoggingIn(true);
+                        setWantsToLogin(true);
                     }}>Log In</Text>
                 </Group>}
             </Group>
@@ -36,7 +40,7 @@ function PageHeader() {
     );
 
     const handleSignOut = () => {
-        setIsLoggingIn(false);
+        setWantsToLogin(false);
 
         const auth = getAuth();
         signOut(auth).then(() => {
@@ -79,7 +83,6 @@ function PageHeader() {
 
     return (
         <>{ !currentUserID ? <HeaderWithoutSession /> : <HeaderWithSession />}</>
-        // <><HeaderWithoutSession /><HeaderWithSession /></>
     );
 }
 

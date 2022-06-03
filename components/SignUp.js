@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Group, TextInput, PasswordInput, Text } from '@mantine/core';
-import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWithPopup, updateCurrentUser } from "firebase/auth";
 import { GiCancel } from 'react-icons/gi'
 import { FaGoogle } from 'react-icons/fa'
 
+import { useSetRecoilState } from 'recoil';
+import signup from '../atoms/signupAtom';
+
 import { db } from "../firebase"
 import { collection, getDocs, doc, setDoc } from "firebase/firestore"
+import { createUserWithEmailAndPassword, getAuth, GoogleAuthProvider, signInWithPopup, updateCurrentUser } from "firebase/auth";
 
 function SignUp() {
-    const [isSignupSuccessful, setIsSignupSuccessful] = useState(false)
     const [signupEmail, setSignupEmail] = useState("");
     const [signupEmailError, setSignupEmailError] = useState("");
     const [signupPassword, setSignupPassword] = useState("");
     const [signupPasswordError, setSignupPasswordError] = useState("");
     const [signupUsername, setSignupUsername] = useState("");
     const [signupUsernameError, setSignupUsernameError] = useState("");
+    const setWantsToSignUp = useSetRecoilState(signup);
 
     const auth = getAuth();
     const googleProvider = new GoogleAuthProvider();
@@ -119,7 +122,7 @@ function SignUp() {
 
                     <Group direction="row" position="center" style={{width: "100%"}} py={20}>
                         <Button onClick={handleSignUpWithEmail} style={{width: "47.4%"}}>Sign Up</Button>
-                        <Button onClick={() => setWantsToSignup(false)} style={{width: "47.4%"}}><GiCancel /></Button>
+                        <Button onClick={() => setWantsToSignUp(false)} style={{width: "47.4%"}}><GiCancel /></Button>
                     </Group>
                 </form>
             </Group>
