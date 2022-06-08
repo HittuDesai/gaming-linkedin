@@ -40,6 +40,7 @@ function AddPhotoModal()  {
             return;
         }
 
+        const postsCollection = collection(db, 'posts');
         const usersCollection = collection(db, 'users');
         const uploadsCollection = collection(usersCollection, `${currentUserID}/uploads`);
         const uploadTimestamp = serverTimestamp();
@@ -48,6 +49,7 @@ function AddPhotoModal()  {
             likedBy: [],
             time: uploadTimestamp,
             caption: caption,
+            uploadedBy: currentUserID,
         }
         
         const imageRef = ref(storage, `${currentUserID}/uploads/${file.name}`);
@@ -57,10 +59,12 @@ function AddPhotoModal()  {
             getDownloadURL(snapshot.ref)
             .then(url => {
                 uploadData = { ...uploadData, url: url, };
-                addDoc(uploadsCollection, uploadData)
+                addDoc(postsCollection, uploadData)
                 .then(response => {
-                    console.log("DO NOTHING");
-                    setShowModal(false);
+                    const idOfAddedDocument = response.id;
+                    addDoc(uploadsCollection, { ...uploadData, id: idOfAddedDocument }).then(() => {
+                        setShowModal(false);
+                    })
                 })
                 .catch(error => {
                     console.log("ERROR IN ADDING DOCUMENT TO UPLOADS COLLECTION", error);

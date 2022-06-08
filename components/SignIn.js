@@ -6,7 +6,6 @@ import { GiCancel } from 'react-icons/gi'
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import signin from '../atoms/signinAtom';
 import userid from '../atoms/userIdAtom';
-import useruploads from '../atoms/userUploadsAtom';
 
 function SignIn() {
     const [signinEmail, setSigninEmail] = useState("");
@@ -16,46 +15,13 @@ function SignIn() {
     const setWantsToSignIn = useSetRecoilState(signin);
     
     const [currentUserID, setCurrentUserID] = useRecoilState(userid);
-    const setCurrentUserUploads = useSetRecoilState(useruploads);
     const auth = getAuth();
 
-    const setStateSynchronously = newUserId => {
-        return new Promise(resolve => {
-            console.log("BAHAHAHAHA");
-            setCurrentUserID(newUserId, resolve);
-        });
-    }
-
     const handleSignIn = () => {    
-        let userIdToken = null;
         setPersistence(auth, browserSessionPersistence).then(() => {
             signInWithEmailAndPassword(auth, signinEmail, signinPassword)
             .then((userCredential) => {
-                const user = userCredential.user;
-                user.getIdTokenResult().then(token => {
-                    userIdToken = token.claims.user_id;
-                })
-                .then(() => {
-                    fetch("http://localhost:3000/api/signinapi", {
-                        method: "POST",
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ token: userIdToken })
-                    })
-                    .then(response => {
-                        response.json().then(res => {
-                            console.log("SIGN IN COMPONENT");
-                            setCurrentUserID(res.userID);
-                            setCurrentUserUploads(res.userUploads);
-                            // setStateSynchronously(res.userID).then(() => {
-                            //     console.log(currentUserID);
-                            //     console.log("STATE HAS BEEN SET SUCCESSFULLY");
-                            // });
-                        });
-                    })
-                    .catch(error => console.error(error));
-                })
+                setCurrentUserID(userCredential.user.uid);
             })
             .catch((error) => {
                 const errorCode = error.code;

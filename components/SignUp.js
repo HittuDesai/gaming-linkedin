@@ -47,6 +47,9 @@ function SignUp() {
                 email: signupEmail,
                 password: signupPassword,
                 username: signupUsername,
+                numPosts: 0,
+                numFollowers: 0,
+                numFollowing: 0,
             }).then(() => {
                 setSignupEmail("");
                 setSignupPassword("");
@@ -54,7 +57,6 @@ function SignUp() {
                 setSignupEmailError("");
                 setSignupPasswordError("");
                 setSignupUsernameError("");
-                setIsSignupSuccessful(true);
                 window.location = "/";
             })
         })

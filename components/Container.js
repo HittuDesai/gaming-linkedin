@@ -8,7 +8,7 @@ import profile from '../atoms/userProfileAtom'
 
 import AddPhotoModal from './AddPhotoModal';
 import LoginPage from './LoginPage';
-import Uploads from './Uploads';
+import Profile from './Profile';
 import Feed from './Feed';
 
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -21,7 +21,6 @@ function Container ({ children }) {
 
     const auth = getAuth();
     onAuthStateChanged(auth, user => {
-        console.log("AUTH STATE LISTENER")
         if(!user)
             setCurrentUserID(null);
         else if(!currentUserID)
@@ -34,11 +33,10 @@ function Container ({ children }) {
                 <>{ wantsToLogin && <LoginPage /> }</> : 
                 <>
                     { (!showUserProfile && !showModal) && <Feed />}
-                    { showUserProfile && <Uploads /> }
+                    { showUserProfile && <Profile /> }
                     { showModal && <AddPhotoModal /> }
                 </>
             }
-            <Uploads />
         </React.Fragment>
     );
 }
