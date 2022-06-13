@@ -5,7 +5,7 @@ import { collection, getDocs } from "firebase/firestore";
 
 import { useRecoilState, useRecoilValue } from "recoil";
 import feedKey from "../atoms/feedAtom";
-import Upload from "./Upload";
+import Post from "./Post";
 import userid from "../atoms/userIdAtom";
 
 function Feed() {
@@ -18,8 +18,9 @@ function Feed() {
         getDocs(allPostsCollection).then(querySnapshot => {
             querySnapshot.docs.forEach(doc => {
                 const docData = doc.data();
-                if(docData.uploadedBy !== currentUserID)
-                    tempFeed.push(docData);
+                const docID = doc.id;
+                if(docData.uploaderID !== currentUserID)
+                    tempFeed.push({...docData, postDocID: docID});
             });
             tempFeed.sort((a, b) => b.time - a.time);
         })
@@ -30,7 +31,7 @@ function Feed() {
     return (
         <>{
             feed.map(post => {
-                return <Upload userUpload={post} />
+                return <Post post={post} />
             })
         }</>
     );

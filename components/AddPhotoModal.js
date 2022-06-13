@@ -8,12 +8,14 @@ import userid from "../atoms/userIdAtom";
 import { useState, useRef } from 'react'
 import { MdAddPhotoAlternate, MdCancel, MdUpload, MdError, MdOutlineDone } from 'react-icons/md'
 
-import { addDoc, collection, serverTimestamp } from "@firebase/firestore"
+import { addDoc, collection, serverTimestamp, setDoc, doc } from "@firebase/firestore"
 import { db, storage } from "../firebase"
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import userdata from "../atoms/userDataAtom";
 
 function AddPhotoModal()  {
     const currentUserID = useRecoilValue(userid);
+    const currentUserData = useRecoilValue(userdata);
     const [showModal, setShowModal] = useRecoilState(modalComponent);
     const [file, setFile] = useState(null);
     const [caption, setCaption] = useState("");
@@ -49,21 +51,25 @@ function AddPhotoModal()  {
             likedBy: [],
             time: uploadTimestamp,
             caption: caption,
-            uploadedBy: currentUserID,
+            uploaderID: currentUserID,
+            // uploaderUsername: currentUserData.username,
+            // uploaderDP: currentUserData.dp,
         }
         
         const imageRef = ref(storage, `${currentUserID}/uploads/${file.name}`);
         uploadBytes(imageRef, file)
         .then(snapshot => {
-            console.log("IMAGE HAS BEEN SUCCESSFULLY UPLOADED TO THE STORAGE");
             getDownloadURL(snapshot.ref)
             .then(url => {
                 uploadData = { ...uploadData, url: url, };
                 addDoc(postsCollection, uploadData)
                 .then(response => {
                     const idOfAddedDocument = response.id;
-                    addDoc(uploadsCollection, { ...uploadData, id: idOfAddedDocument }).then(() => {
-                        setShowModal(false);
+                    addDoc(uploadsCollection, { postID: idOfAddedDocument }).then(res => {
+                        const uploadID = res.id;
+                        setDoc(doc(db, `posts/${idOfAddedDocument}`), { uploadID: uploadID }, { merge: true })
+                        .then(() => setShowModal(false))
+                        .catch(error => console.log(error));
                     })
                 })
                 .catch(error => {

@@ -8,7 +8,7 @@ import useruploads from '../atoms/userUploadsAtom'
 import userdata from '../atoms/userDataAtom'
 
 import { Group } from '@mantine/core';
-import Upload from './Upload';
+import Post from './Post';
 import UserDataInProfile from './UserDataInProfile';
 
 function Profile() {
@@ -20,16 +20,26 @@ function Profile() {
     const setCurrentUserData = useSetRecoilState(userdata);
 
     useEffect(() => {
+        let tempDocIDs = [];
         let tempUploads = [];
         getDocs(postsCollection)
         .then(querySnapshot => {
             querySnapshot.docs.forEach(doc => {
-                tempUploads.push({...doc.data(), id: doc.id});
+                tempDocIDs.push(doc.data().postID);
             })
-            tempUploads.sort((a, b) => b.time - a.time);
         })
         .then(() => {
-            setCurrentUserUploads(tempUploads);
+            tempDocIDs.map(docID => {
+                const docRef = doc(db, `posts/${docID}`);
+                getDoc(docRef).then(document => {
+                    const tempData = document.data();
+                    tempUploads = [...tempUploads, tempData];
+                })
+                .then(() => {
+                    tempUploads.sort((a, b) => b.time - a.time);
+                    setCurrentUserUploads(tempUploads);
+                })
+            })
         })
         .catch(error => {
             console.log("ERROR", error);
@@ -45,15 +55,14 @@ function Profile() {
     
     }, [])
     
-
     return (
         <Group direction='column' style={{width: '100%'}} position='center'>
             <UserDataInProfile />
             {
-                currentUserUploads.map((userUpload, index) => {
+                currentUserUploads.map((post, index) => {
                     return (
                         <React.Fragment key={index}>
-                            <Upload userUpload={userUpload}/>
+                            <Post post={post}/>
                         </React.Fragment>
                     );
                 })
