@@ -5,8 +5,8 @@ export default function Home() {
   return (
     <div>
       <Head>
-        <title>Gamer's LinkedIn</title>
-        <meta name="description" content="LinkedIn for Gamers" />
+        <title>Instagram v1</title>
+        <meta name="description" content="Instagram Clone" />
       </Head>
       <Container />
     </div>
